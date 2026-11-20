@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Checkout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-r from-indigo-500 to-purple-600 p-8 font-sans">
+
+<h1 class="text-4xl font-bold text-center text-white mb-8">
+    Checkout
+</h1>
+
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+
+    <h2 class="text-2xl font-semibold mb-4">Order Summary</h2>
+    <div id="bill" class="space-y-3"></div>
+
+    <h3 class="text-xl font-bold mt-4" id="total"></h3>
+
+    <h2 class="text-2xl font-semibold mt-8">Shipping Details</h2>
+
+    <input placeholder="Full Name" class="w-full border p-2 mt-2 rounded">
+    <input placeholder="Address" class="w-full border p-2 mt-2 rounded">
+    <input placeholder="City" class="w-full border p-2 mt-2 rounded">
+    <input placeholder="Pincode" class="w-full border p-2 mt-2 rounded">
+
+    <h2 class="text-2xl font-semibold mt-8">Payment Method</h2>
+
+    <select class="w-full border p-2 mt-2 rounded">
+        <option>UPI</option>
+        <option>Credit Card</option>
+        <option>Cash on Delivery</option>
+    </select>
+
+    <button onclick="payNow()" 
+    class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 mt-8 rounded w-full text-lg">
+        Pay Now
+    </button>
+
+</div>
+
+<script>
+let billDiv = document.getElementById("bill");
+let totalDiv = document.getElementById("total");
+
+let total = 0;
+
+// 🔥 GET CART FROM URL
+let params = new URLSearchParams(window.location.search);
+let cart = [];
+
+try {
+    let cartParam = params.get("cart");
+    if (cartParam) {
+        cart = JSON.parse(decodeURIComponent(cartParam));
+    }
+} catch (e) {
+    cart = [];
+}
+
+console.log("CART RECEIVED:", cart);
+
+// 🚨 EMPTY
+if (!cart || cart.length === 0) {
+    billDiv.innerHTML = "<p>No items in cart</p>";
+    totalDiv.innerText = "Total: ₹0";
+}
+else {
+    cart.forEach(item => {
+        let qty = item.qty || 1;
+        let price = item.price || 0;
+        let itemTotal = price * qty;
+
+        total += itemTotal;
+
+        billDiv.innerHTML += `
+            <div class="flex justify-between border-b py-2">
+                <span>${item.name} (x${qty})</span>
+                <span>₹${itemTotal}</span>
+            </div>
+        `;
+    });
+
+    totalDiv.innerText = "Total: ₹" + total;
+}
+
+function payNow() {
+    alert("🎉 Payment Successful!");
+    window.location.href = "index.html";
+}
+</script>
